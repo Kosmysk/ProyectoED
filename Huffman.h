@@ -107,17 +107,6 @@ public:
     }
 };
 
-int main() {
-    HuffmanCoding huffman;
-    string texto = "╠Ã┐╠Ã┐╠Ã Ã┐╠Ã┐";
-    string textoCodificado = huffman.encode(texto);
-    cout << "Texto codificado: " << textoCodificado << endl;
-    string textoDecodificado = huffman.decode(textoCodificado);
-    cout << "Texto decodificado: " << textoDecodificado << endl;
-
-    return 0;
-}
-
 //#saqué algunas cosas de https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
 // https://docs.python.org/3/library/heapq.html
 //https://www.programiz.com/dsa/huffman-coding
