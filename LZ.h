@@ -60,22 +60,6 @@ string descompresionLZ(const vector<pair<string, int>>& comprimido) {
     return descomprimido;
 }
 
-int main() {
-    string texto = "holaholandaholandesa";
-    auto comprimido = compresionLZ(texto);
-
-    cout << "Texto comprimido: ";
-    for (const auto& [s, length] : comprimido) {
-        cout << "(" << s << "," << length << ") ";
-    }
-    cout << endl;
-
-    string descomprimido = descompresionLZ(comprimido);
-    cout << "Texto descomprimido: " << descomprimido << endl;
-
-    return 0;
-}
-
 
 //links referenciales de donde me ayudé con los strings
 // https://cplusplus.com/reference/string/string/
