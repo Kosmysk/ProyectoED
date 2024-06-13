@@ -10,7 +10,7 @@ using namespace std;
 struct Node {
     char data;  // Carácter representado por el nodo
     unsigned freq;  // Frecuencia del carácter
-    Node* left;  // Hijo izquierdo del nodo en el árbol (tomas ijo mio)
+    Node* left;  // Hijo izquierdo del nodo en el árbol 
     Node* right;  // Hijo derecho del nodo en el árbol
 
     Node(char data, unsigned freq) : data(data), freq(freq), left(nullptr), right(nullptr) {}
@@ -118,6 +118,6 @@ int main() {
     return 0;
 }
 
-//#saqué algunas weas de https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+//#saqué algunas cosas de https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
 // https://docs.python.org/3/library/heapq.html
 //https://www.programiz.com/dsa/huffman-coding
