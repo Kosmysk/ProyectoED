@@ -32,7 +32,7 @@ vector<pair<string, int>> compresionLZ(const string& texto) {
     while (pos < texto.size()) {                 // recorre el texto de entrada
         auto [findPos, findLargo] = findStrings(texto, pos);        //busca substrings repetidos y los reemplaza con pairs (pos,largo)
 
-        if (findLargo > 1) {
+        if (findLargo >= 1) {
             comprimido.push_back({to_string(findPos), findLargo});              // Almacena la posición y el largo del substring en formato de string
             pos += findLargo;
         } else {
