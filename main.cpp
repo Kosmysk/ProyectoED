@@ -1,31 +1,29 @@
 #include <iostream>
-#include <chrono>
 #include <fstream>
+#include <sstream>
+#include <vector>
 #include <string>
-#include "Huffman.h"
 #include "LZ.h"
+#include "Huffman.h"
+
 using namespace std;
 
-int main() {
-    string data50MB = "english50MB.txt";
-    string data100MB = "english100MB.txt";
-    string data200MB = "english200MB.txt";
+string leerArchivo(const string& filename){
+    ifstream file(filename);
 
-    ifstream file(data50MB.c_str());
-    ifstream file2(data100MB.c_str());
-    ifstream file3(data200MB.c_str());
+    stringstream temp;
+    temp << file.rdbuf();
+    return temp.str();
+}
 
-    string linea;
 
+int main(){
     HuffmanCoding huffman;
-  
-    while(getline(file, linea)){
-        auto txtComprimido = compresionLZ(linea);
-        //auto txtDescomprimido = descompresionLZ(txtComprimido);
-        
-    }
-    //auto txtComprimido = compresionLZ(data200MB);
-    //auto txtDescomprimido = descompresionLZ(txtComprimido);
 
-    return 0;
+    string dataprueba = "data10245KB.txt";
+    string originalFile = leerArchivo(dataprueba);
+    string CodifiedFile = huffman.encode(originalFile);
+    string DeCodifiedFile = huffman.decode(CodifiedFile);
+    
+
 }
