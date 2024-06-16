@@ -10,10 +10,10 @@ pair<int, int> findStrings(const string& texto, int pos) {
     int maxLargo = 0;
     int maxPos = -1;
 
-    for (int inicio = 0; inicio < pos; ++inicio) {              // recorre todas las posiciones anteriores a la posición actual
+    for (int inicio = 0; inicio < pos; ++inicio) {              // recorre todas las posiciones anteriores a la posición actual           O(n)
         int largo = 0;
-        while (pos + largo < texto.size() && texto[inicio + largo] == texto[pos + largo]) {             // compara los caracteres en la posición 'inicio' y 'pos'
-            ++largo;
+        while (pos + largo < texto.size() && texto[inicio + largo] == texto[pos + largo]) {             // compara los caracteres en la posición 'inicio' y 'pos'      O(n^2)
+            ++largo; // esto no hace que la complejidad dea O(n^2)???
         }
         if (largo > maxLargo) {             // si se encuentra un substring más largo modifica el valor del largo máximo y la posición máxima 
             maxLargo = largo;
@@ -29,7 +29,7 @@ vector<pair<string, int>> compresionLZ(const string& texto) {
     vector<pair<string, int>> comprimido;
     int pos = 0;
 
-    while (pos < texto.size()) {                 // recorre el texto de entrada
+    while (pos < texto.size()) {                 // recorre el texto de entrada          // y esto no hace que sea O(n^3)????? por complejidad combinada, digo yo owo
         auto [findPos, findLargo] = findStrings(texto, pos);        //busca substrings repetidos y los reemplaza con pairs (pos,largo)
 
         if (findLargo >= 1) {
@@ -39,7 +39,7 @@ vector<pair<string, int>> compresionLZ(const string& texto) {
             comprimido.push_back({string(1, texto[pos]), 0});               // Si no encuentra substrings repetidos, lo agrega como uno nuevo con el 0 en el segundo elemento del pair
             ++pos;
         }
-    }
+    } 
 
     return comprimido;
 }
