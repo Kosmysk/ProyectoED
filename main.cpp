@@ -22,6 +22,12 @@ string leerArchivo(const string& filename){
 void logResults(ofstream &output, double time){
     output << time << endl;
 }
+
+// Funcion para guardar los archivos, para hacer pruebas de codificacion/compresion y decodificacion/decompresion por separado
+void saveFile(ofstream  &output, string &codified){
+    output << codified;
+}
+
 // Funcion que mide el tiempo que toma en codificar y decodificar 20 veces
 void CodeAndDecodeExperiment(const string &filename, const string &resultados){
     HuffmanCoding huffman;
@@ -52,9 +58,20 @@ void CodeExperiment(const string &filename, const string &resultados){
 }
 
 int main(){
+    HuffmanCoding huffman;
 
-    string dataprueba = "data10245KB.txt";
-    CodeAndDecodeExperiment(dataprueba, "resultados.csv");
+    string dataprueba = "prueba.txt";
+    string textocod = "textocod.txt";
+    string textodecod = "textodecod2.txt";
+    //CodeAndDecodeExperiment(dataprueba, "resultados10245KB.csv");
+
+    string original = leerArchivo(dataprueba);
+    string codificadotxt = leerArchivo(textocod);
+
+    string decodificado = huffman.decode(codificadotxt);
+    
+    ofstream file(textodecod);
+    saveFile(file, decodificado);
 
     return 0;
 
