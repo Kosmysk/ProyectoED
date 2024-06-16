@@ -3,110 +3,134 @@
 #include <unordered_map>
 #include <string>
 #include <sstream>
+#include <memory>
 
 using namespace std;
 
-// Estructura para representar un nodo en el árbol Huffman
-struct Node {
-    char data;  // Carácter representado por el nodo
-    unsigned freq;  // Frecuencia del carácter
-    Node* left;  // Hijo izquierdo del nodo en el árbol 
-    Node* right;  // Hijo derecho del nodo en el árbol
-
-    Node(char data, unsigned freq) : data(data), freq(freq), left(nullptr), right(nullptr) {}
-    ~Node() {
-        delete left;
-        delete right;
-    }
-};
-
-// Estructura de comparación para el heap de mínimos
-struct Compare {
-    bool operator()(Node* left, Node* right) {
-        return left->freq > right->freq;
-    }
-};
-
-// Clase principal para la codificación y decodificación
 class HuffmanCoding {
-private:
-    priority_queue<Node*, vector<Node*>, Compare> minHeap;  // Heap de mínimos para el árbol Huffman
-    unordered_map<char, string> codes;  // Diccionario para almacenar codigos huffman
-    unordered_map<string, char> reverseMapping;  // Diccionario inverso para decodificación
+private: // Estructura de Nodo con uso de shared_ptr para gestión automática de memoria
+    struct Node {
+        char data; // Carácter representado por el nodo
+        unsigned freq; // Frecuencia del carácter
+        shared_ptr<Node> left; // Hijo izquierdo del nodo en el árbol
+        shared_ptr<Node> right; // Hijo derecho del nodo en el árbol
 
-    // Método para construir el árbol Huffman a partir de las frecuencias
-    Node* buildTree(const unordered_map<char, unsigned>& freqMap) {
+        Node(char data, unsigned freq) : data(data), freq(freq), left(nullptr), right(nullptr) {}
+        ~Node() {} // Destructor para liberar nodos recursivamente
+    };
+    // Estructura de comparación para el heap de mínimos 
+    struct Compare {
+        bool operator()(const shared_ptr<Node>& left, const shared_ptr<Node>& right) {
+            return left->freq > right->freq;
+        }
+    };
+
+    shared_ptr<Node> root; // Raíz del árbol Huffman
+
+    // Método privado para construir el árbol Huffman
+    void buildTree(const unordered_map<char, unsigned>& freqMap) {
+        priority_queue<shared_ptr<Node>, vector<shared_ptr<Node>>, Compare> minHeap; // Heap de mínimos para el árbol Huffman
         for (const auto& pair : freqMap) {
-            minHeap.push(new Node(pair.first, pair.second));
+            minHeap.push(make_shared<Node>(pair.first, pair.second));
         }
 
         while (minHeap.size() != 1) {
-            Node* left = minHeap.top();
+            auto left = minHeap.top();
             minHeap.pop();
 
-            Node* right = minHeap.top();
+            auto right = minHeap.top();
             minHeap.pop();
 
-            Node* merged = new Node('$', left->freq + right->freq);
+            auto merged = make_shared<Node>('$', left->freq + right->freq);
             merged->left = left;
             merged->right = right;
 
             minHeap.push(merged);
         }
 
-        return minHeap.top();
+        root = minHeap.top();
+        minHeap.pop();
     }
 
-    // Método auxiliar para construir códigos Huffman recursivamente
-    void buildCodesHelper(Node* root, const string& code) {
-        if (root == nullptr) {
+    // Método privado para construir códigos Huffman recursivamente
+    void buildCodesHelper(shared_ptr<Node> node, const string& code, unordered_map<char, string>& codes) {
+        if (node == nullptr) {
             return;
         }
 
-        if (root->data != '$') {
-            codes[root->data] = code;
-            reverseMapping[code] = root->data;
+        if (node->data != '$') {
+            codes[node->data] = code;
         }
 
-        buildCodesHelper(root->left, code + "0");
-        buildCodesHelper(root->right, code + "1");
+        buildCodesHelper(node->left, code + "0", codes);
+        buildCodesHelper(node->right, code + "1", codes);
     }
 
 public:
-    // Método para codificar 
+    // Constructor
+    HuffmanCoding() : root(nullptr) {}
+
+    // Metodo público para CODIFICAR texto
     string encode(const string& text) {
+        // Calcular frecuencias de los caracteres
         unordered_map<char, unsigned> freqMap;
         for (char c : text) {
             freqMap[c]++;
         }
 
-        Node* root = buildTree(freqMap);
-        buildCodesHelper(root, "");
+        // Construir el arbol Huffman
+        buildTree(freqMap);
 
-        stringstream encoded;
+        // Crear mapa de códigos Huffman
+        unordered_map<char, string> codes;
+        string code;
+        buildCodesHelper(root, code, codes);
+
+        // Codificar el texto
+        string encoded;
         for (char c : text) {
-            encoded << codes[c];
+            encoded += codes[c];
         }
 
-        return encoded.str();
+        return encoded;
     }
 
-    // Método para decodificar 
+    // Metodo publico para DECODIFICAR texto
     string decode(const string& encodedText) {
-        stringstream decoded;
-        string code;
+        string decoded;
+        shared_ptr<Node> current = root;
+
         for (char bit : encodedText) {
-            code += bit;
-            if (reverseMapping.find(code) != reverseMapping.end()) {
-                decoded << reverseMapping[code];
-                code = "";
+            if (bit == '0') {
+                current = current->left;
+            } else {
+                current = current->right;
+            }
+
+            if (current->left == nullptr && current->right == nullptr) {
+                decoded += current->data;
+                current = root;
             }
         }
 
-        return decoded.str();
+        return decoded;
     }
 };
 
-//#saqué algunas cosas de https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
-// https://docs.python.org/3/library/heapq.html
-//https://www.programiz.com/dsa/huffman-coding
+
+//Update: Añadí un constructor explicito en la clase HuffmanCoding para inicializar la raíz del arbol Huffman (root)
+// como nullptr. Esto proporciona una inicialización limpia y coherente del objeto HuffmanCoding al crear instancias de la clase.
+
+
+//  Antes había riesgos de fugas de mmoria y liberaciones incorrectas.  Cambié de punteros crudos a punteros inteligentes, usando shared_ptr 
+//para los nodos del arbol Huffman. Esto mejora la gestión de la memoria y evita problemas con la liberacion incorecta de memoria ya que liberan memoria
+//automaticamente cuando los objetos ya no son necesarios.
+
+//Eliminación del Destructor Personalizado: Ya no necesitamos un destructor personalizado para los nodos, gracias al uso de shared_ptr,
+// que se encarga automáticamente de liberar la memoria.
+
+//Mejora en la Construcción del Árbol Huffman: Ajusté los métodos buildTree y buildcodeshelper para trabajar con shared_ptr, lo cual 
+//hace que la construcción del árbol sea másb segura.
+
+//en conclusión: te queremos shared_ptr <3 (esto de los punteros inteligentes los saqué de estas paginas // https://www.geeksforgeeks.org/shared_ptr-in-cpp/
+// https://learn.microsoft.com/es-es/cpp/cpp/how-to-create-and-use-shared-ptr-instances?view=msvc-170  y https://cplusplus.com/reference/memory/shared_ptr/)
