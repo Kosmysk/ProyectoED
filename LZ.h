@@ -60,6 +60,8 @@ string descompresionLZ(const vector<pair<string, int>>& comprimido) {
     return descomprimido;
 }
 
+// voy a ver si puedo modificar eso de las complejidades en otro archivo, att: Fernando  
+
 
 //links referenciales de donde me ayudé con los strings
 // https://cplusplus.com/reference/string/string/
