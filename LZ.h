@@ -54,69 +54,69 @@ bool search_key(TrieNode* raiz, const string& key, int& pos) {
 }
 
 // Función para comprimir el texto usando LZ
-vector<pair<int, int>> compresionLZ(const string& text) {
-    TrieNode* raiz = new TrieNode();
-    vector<pair<int, int>> comprimido;
-    unordered_map<string, int> first;
-    int pos;
+vector<pair<int, int>> compresionLZ(const string& texto) {
+    TrieNode* raiz = new TrieNode();                        // Crea el nodoTrie
+    vector<pair<int, int>> comprimido;                      //Vector para almacenar la compresión
+    unordered_map<string, int> first;                       //unordered_map para almacenar la primera ocurrencia de cada cadena
+    int pos;                                                //Variable para almacenar la posición
 
-    for (int i = 0; i < text.size(); ++i) {
-        string substring;
-        int longLength = 0;
-        int longPos = -1;
+    for (int i = 0; i < texto.size(); ++i) {                    //recorre todo el texto
+        string substring;                                        //Variable que guarda el substring actual
+        int longLength = 0;                                      //Longitud de la coincidencia más larga encontrada
+        int longPos = -1;                                        //Posición de la coincidencia más larga encontrada
 
-        for (int j = i; j < text.size(); ++j) {
-            substring += text[j];
-            if (search_key(raiz, substring, pos)) {
-                longLength = substring.size();
-                longPos = pos;
+        for (int j = i; j < texto.size(); ++j) {                //Busca todas los substrings que coinciden desde la posición i
+            substring += texto[j];                                //Agrega el carácter al final del substring
+            if (search_key(raiz, substring, pos)) {                //Busca el substring en el Trie
+                longLength = substring.size();                    //Actualiza el valor de "longLenght" para guardar la longitud de la coincidencia más larga
+                longPos = pos;                                    //Actualiza el valor de "longPos" para guardar la posición de inicio de la coincidencia más larga
             } else {
                 break;
             }
         }
 
         if (longLength > 1) {
-            comprimido.push_back(make_pair(longPos, longLength));
-            i += longLength - 1; // Mueve i al final de la subcadena coincidente
+            comprimido.push_back(make_pair(longPos, longLength));        //Agrega la posición y longitud de la coincidencia al vector comprimido
+            i += longLength - 1;                                        //Mueve i al final del substring coincidente
         } else {
-            string caracter = string(1, text[i]);
-            if (first.find(caracter) != first.end()) {
-                comprimido.push_back(make_pair(first[caracter], 1));
+            string caracter = string(1, texto[i]);                        //Obtiene el carácter actual como string
+            if (first.find(caracter) != first.end()) {                    //Verifica si el carácter ya está en unordered_map de primeras ocurrencias "first"
+                comprimido.push_back(make_pair(first[caracter], 1));        //Agrega la posición de la primera aparición al vector comprimido
             } else {
-                comprimido.push_back(make_pair(text[i], 0));
-                first[caracter] = i;
+                comprimido.push_back(make_pair(texto[i], 0));            //Agrega el carácter al vector comprimido
+                first[caracter] = i;                                    //Registra la posición de la primera ocurrencia del carácter en unordered_map
             }
         }
 
-        substring.clear();
-        for (int j = i; j < text.size(); ++j) {
-            substring += text[j];
-            insert_key(raiz, substring, i);
+        substring.clear();                                                //vacía el substring para insertar todos los substrings en el Trie
+        for (int j = i; j < texto.size(); ++j) {                          //Inserta todos los substrings desde la posición i en el Trie
+            substring += texto[j];                                        //Agrega el carácter al final de la subcadena actual
+            insert_key(raiz, substring, i);                               //Inserta el substring en el Trie
         }
     }
 
-    return comprimido;
+    return comprimido;                                                //Retorna el texto comprimido
 }
 
 // Función para descomprimir el texto usando LZ
 string descompresionLZ(const vector<pair<int, int>>& comprimido) {
-    string descomprimido;
+    string descomprimido;                //Variable para almacenar el texto descomprimido
 
-    for (const auto& [caracter, largo] : comprimido) {
-        if (largo == 0) {
-            descomprimido += char(caracter);
+    for (const auto& [caracter, largo] : comprimido) {                        //recorre todo el texto comprimido
+        if (largo == 0) {                                                    //Si la longitud es cero, es un carácter que aparece por primera vez en el texto comprimido y tiene forma (a,0) por ejemplo
+            descomprimido += char(caracter);                                //Agrega el carácter al texto descomprimido
         } else {
-            int pos = caracter;
-            descomprimido += descomprimido.substr(pos, largo);
+            int pos = caracter;                                            //asigna el valor de la posición inicial del substring en el texto descomprimido
+            descomprimido += descomprimido.substr(pos, largo);            //Agrega el substring al texto descomprimido
         }
     }
     cout << endl;
-    return descomprimido;
-}
+    return descomprimido;                //retorna el texto descomprimido
+}    
 
-void imprimeC(vector<pair<int, int>> comprimido){
-    cout << "Texto comprimido: ";
-    for (const auto& p : comprimido) {
+void imprimeC(vector<pair<int, int>> comprimido){                //Función que imprime el texto comprimido
+    cout << "Texto comprimido: ";    
+    for (const auto& p : comprimido) {                                    //Recorre el texto comprimido y va imprimiendo cada uno de los pairs
         if (p.second == 0) {
             cout << "(" << char(p.first) << ",0) ";
         } else {
