@@ -37,16 +37,16 @@ void insert_key(TrieNode* raiz, const string& key, int pos) {
 
 //función de búsqueda de caracteres "key", que recorre el TrieNode 
 bool search_key(TrieNode* raiz, const string& key, int& pos) {
-    TrieNode* nodoActual = raiz;
+    TrieNode* nodoActual = raiz;                //Inicializa el puntero "nodoActual"  con el nodo "raiz", tal como en insert_key
 
-    for (auto c : key) {
-        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {
-            return false;
+    for (auto c : key) {                        //recorre el string
+        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {    //Comprueba si el nodo existe en el Trie para el caracter que se está revisando
+            return false;            //el string o char no existe en Trie
         }
-        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];
+        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];        //Mueve el puntero del Nodo actual al nodo del nuevo caracter agregado
     }
 
-    if (nodoActual->wordEnd) {
+    if (nodoActual->wordEnd) {                            //revisa si el nodo actual apunta al final del string
         pos = nodoActual->posN;
         return true;
     }
