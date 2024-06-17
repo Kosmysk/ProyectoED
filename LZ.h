@@ -2,8 +2,23 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <fstream>
 
 using namespace std;
+struct TrieNode {                    //estructura de datos para manejar los caracteres del texto
+    TrieNode* childNode[256];        //matriz de punteros para nodos secundarios de cada nodo
+    bool wordEnd;                    //variable que se utiliza para indicar el final de un string
+    int posN;                        //posicion actual
+
+    TrieNode() {                                //constructor del nodo Trie
+        wordEnd = false;
+        posN = -1;
+        for (int i = 0; i < 256; i++) {
+            childNode[i] = nullptr;
+        }
+    }
+};
+
 
 // Función para encontrar el substring más largo que ya apareció antes, y retorna la posición de inicio de dicho substring y su largo.
 pair<int, int> findStrings(const string& texto, int pos) {                  
