@@ -10,13 +10,18 @@
 using namespace std;
 
 // Funcion para leer un archivo
-string leerArchivo(const string& filename){
-    ifstream file(filename); //abre el archivo
+string leerArchivo(const string& filename) {
+    ifstream file(filename);         //lee el archivo ingresado por parámetro
 
-    stringstream temp; //aca crea un espacio temporal donde se guarda el texto del archivo en temp
-    temp << file.rdbuf();
-    return temp.str(); // asi que lo que se obtiene seria algo asi como: linea 1\n linea 2\n ... y asi, de esa manera se guardan los saltos de linea tambien.
-} 
+    // Leer todo el contenido del archivo en 'texto'
+    string texto;
+    char c;
+    while (file.get(c)) {        //agrega carácter por carácter
+        texto += c;
+    }
+    file.close();                //cierra el archivo
+    return texto;                //retorna el texto del archivo
+}
 
 // Funcion para guardar los resultados, no sé que más agregarle, solo muestra el tiempo del 1 al 20 como una columna, si alguno tiene alguna idea modifiquelo pls sdjds.
 void logResults(ofstream &output, double time){
@@ -73,6 +78,13 @@ int main(){
     ofstream file(textodecod);
     saveFile(file, decodificado);
 
+    //LZ
+    vector<pair<int, int>> comprimido = compresionLZ(original);
+    imprimeC(comprimido);
+
+    string descomprimido = descompresionLZ(comprimido);
+    cout << "Texto descomprimido: " << descomprimido << endl;
+    
     return 0;
 
 
