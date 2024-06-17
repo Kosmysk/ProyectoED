@@ -21,18 +21,18 @@ struct TrieNode {                    //estructura de datos para manejar los cara
 
 //función que se encarga de agregar los caracteres "key" como un nuevo nodo
 void insert_key(TrieNode* raiz, const string& key, int pos) {
-    TrieNode* nodoActual = raiz;
+    TrieNode* nodoActual = raiz;                //Inicializa el puntero "nodoActual"  con el nodo "raiz"
 
-    for (auto c : key) {
-        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {
-            TrieNode* newNode = new TrieNode();
-            nodoActual->childNode[static_cast<unsigned char>(c)] = newNode;
+    for (auto c : key) {                        //Itera a lo largo del string
+        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {            //Comprueba si el nodo existe en Trie para el carácter que se le pasó por parámetro "key" que ahora es "c"
+            TrieNode* newNode = new TrieNode();                                            //Si no existe, lo crea
+            nodoActual->childNode[static_cast<unsigned char>(c)] = newNode;                //Y mantiene la referencia para el nodo recién creado
         }
-        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];
+        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];                //mueve el puntero del nodo actual al nuevo nodo creado
     }
 
-    nodoActual->wordEnd = true;
-    nodoActual->posN = pos;
+    nodoActual->wordEnd = true;                                    //cambia el valor de "wordEnd" para el puntero "nodoActual" porque ahí terminaría el string
+    nodoActual->posN = pos;                                        //actualiza la posición del "nodoActual"
 }
 
 //función de búsqueda de caracteres "key", que recorre el TrieNode 
