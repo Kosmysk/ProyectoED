@@ -54,44 +54,79 @@ bool search_key(TrieNode* raiz, const string& key, int& pos) {
 }
 
 // Función para comprimir el texto usando LZ
-vector<pair<string, int>> compresionLZ(const string& texto) {
-    vector<pair<string, int>> comprimido;
-    int pos = 0;
+vector<pair<int, int>> compresionLZ(const string& text) {
+    TrieNode* raiz = new TrieNode();
+    vector<pair<int, int>> comprimido;
+    unordered_map<string, int> first;
+    int pos;
 
-    while (pos < texto.size()) {                 // recorre el texto de entrada          // y esto no hace que sea O(n^3)????? por complejidad combinada, digo yo owo
-        auto [findPos, findLargo] = findStrings(texto, pos);        //busca substrings repetidos y los reemplaza con pairs (pos,largo)
+    for (int i = 0; i < text.size(); ++i) {
+        string substring;
+        int longLength = 0;
+        int longPos = -1;
 
-        if (findLargo >= 1) {
-            comprimido.push_back({to_string(findPos), findLargo});              // Almacena la posición y el largo del substring en formato de string
-            pos += findLargo;
-        } else {
-            comprimido.push_back({string(1, texto[pos]), 0});               // Si no encuentra substrings repetidos, lo agrega como uno nuevo con el 0 en el segundo elemento del pair
-            ++pos;
+        for (int j = i; j < text.size(); ++j) {
+            substring += text[j];
+            if (search_key(raiz, substring, pos)) {
+                longLength = substring.size();
+                longPos = pos;
+            } else {
+                break;
+            }
         }
-    } 
+
+        if (longLength > 1) {
+            comprimido.push_back(make_pair(longPos, longLength));
+            i += longLength - 1; // Mueve i al final de la subcadena coincidente
+        } else {
+            string caracter = string(1, text[i]);
+            if (first.find(caracter) != first.end()) {
+                comprimido.push_back(make_pair(first[caracter], 1));
+            } else {
+                comprimido.push_back(make_pair(text[i], 0));
+                first[caracter] = i;
+            }
+        }
+
+        substring.clear();
+        for (int j = i; j < text.size(); ++j) {
+            substring += text[j];
+            insert_key(raiz, substring, i);
+        }
+    }
 
     return comprimido;
 }
 
 // Función para descomprimir el texto usando LZ
-string descompresionLZ(const vector<pair<string, int>>& comprimido) {
+string descompresionLZ(const vector<pair<int, int>>& comprimido) {
     string descomprimido;
 
     for (const auto& [caracter, largo] : comprimido) {
-        if (largo == 0) {           // Si el segundo valor (el largo) es cero, añade el caracter directamente a "descomprimido"
-            descomprimido += caracter;
+        if (largo == 0) {
+            descomprimido += char(caracter);
         } else {
-            int pos = stoi(caracter);                      // convierte un string a un int
-            descomprimido += descomprimido.substr(pos, largo);     // Añade el substring desde la posición y largo especificado al string "descomprimido"
+            int pos = caracter;
+            descomprimido += descomprimido.substr(pos, largo);
         }
     }
-
+    cout << endl;
     return descomprimido;
 }
 
-// voy a ver si puedo modificar eso de las complejidades en otro archivo, att: Fernando  
-
+void imprimeC(vector<pair<int, int>> comprimido){
+    cout << "Texto comprimido: ";
+    for (const auto& p : comprimido) {
+        if (p.second == 0) {
+            cout << "(" << char(p.first) << ",0) ";
+        } else {
+            cout << "(" << p.first << "," << p.second << ") ";
+        }
+    }
+    cout << endl;
+}
 
 //links referenciales de donde me ayudé con los strings
 // https://cplusplus.com/reference/string/string/
-// 
+// https://www.geeksforgeeks.org/trie-insert-and-search/
+// https://www.geeksforgeeks.org/introduction-to-trie-data-structure-and-algorithm-tutorials/
