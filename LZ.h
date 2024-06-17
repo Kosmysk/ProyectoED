@@ -19,24 +19,38 @@ struct TrieNode {                    //estructura de datos para manejar los cara
     }
 };
 
+//función que se encarga de agregar los caracteres "key" como un nuevo nodo
+void insert_key(TrieNode* raiz, const string& key, int pos) {
+    TrieNode* nodoActual = raiz;
 
-// Función para encontrar el substring más largo que ya apareció antes, y retorna la posición de inicio de dicho substring y su largo.
-pair<int, int> findStrings(const string& texto, int pos) {                  
-    int maxLargo = 0;
-    int maxPos = -1;
-
-    for (int inicio = 0; inicio < pos; ++inicio) {              // recorre todas las posiciones anteriores a la posición actual           O(n)
-        int largo = 0;
-        while (pos + largo < texto.size() && texto[inicio + largo] == texto[pos + largo]) {             // compara los caracteres en la posición 'inicio' y 'pos'      O(n^2)
-            ++largo; // esto no hace que la complejidad dea O(n^2)???
+    for (auto c : key) {
+        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {
+            TrieNode* newNode = new TrieNode();
+            nodoActual->childNode[static_cast<unsigned char>(c)] = newNode;
         }
-        if (largo > maxLargo) {             // si se encuentra un substring más largo modifica el valor del largo máximo y la posición máxima 
-            maxLargo = largo;
-            maxPos = inicio;
-        }
+        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];
     }
 
-    return {maxPos, maxLargo};
+    nodoActual->wordEnd = true;
+    nodoActual->posN = pos;
+}
+
+//función de búsqueda de caracteres "key", que recorre el TrieNode 
+bool search_key(TrieNode* raiz, const string& key, int& pos) {
+    TrieNode* nodoActual = raiz;
+
+    for (auto c : key) {
+        if (nodoActual->childNode[static_cast<unsigned char>(c)] == nullptr) {
+            return false;
+        }
+        nodoActual = nodoActual->childNode[static_cast<unsigned char>(c)];
+    }
+
+    if (nodoActual->wordEnd) {
+        pos = nodoActual->posN;
+        return true;
+    }
+    return false;
 }
 
 // Función para comprimir el texto usando LZ
