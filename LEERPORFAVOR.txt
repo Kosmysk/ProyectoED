@@ -1,0 +1,4 @@
+Hay un bug, probablemente en la implementación de leer y escribir los archivos .bin en Huffman.h que hace que para archivos .txt con textos largos no guarde bien solo los últimos bits del archivo.
+por ejemplo si uso prueba.txt y al decodificar del archivo .bin resultante funciona bien, pero si yo utilizó el archivo pruebarepetido.txt al final me añade una "a". A nuestro parecer esto sucede
+por la manera en como se guardan los bits que sobran al final, por ejemplo, si el ultimo byte no se alcanza a rellenar, este se mete asi tal cual rellenando los espacios vacios con ceros, lo que puede
+ser que esté causando este pequeño error, sin embargo el archivo sigue codificado de manera eficiente y ahorrando espacio.
