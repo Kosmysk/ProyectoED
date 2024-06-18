@@ -126,6 +126,31 @@ void imprimeC(vector<pair<int, int>> comprimido){                //Función que 
     cout << endl;
 }
 
+// Funcion para guardar el archivo comprimido
+void saveComp(const vector<pair<int, int>>& comprimido, const string& filename) {
+    ofstream file(filename, ios::binary); // Abrimos el archivo donde vamos a guardar el output en modo binario
+    for (const auto& p : comprimido) { // En este ciclo for se itera sobre cada elemento p (par) del vector
+        // Aca debemos hacer reinterpret_cast para transformar a un punto const char el entero correspondiente del par, esto porque write espera ese puntero
+        // luego se usa sizeof para saber la cantidad de bytes que tiene el par, y write escribe esta cantidad de bytes en el archivo
+        file.write(reinterpret_cast<const char*>(&p.first), sizeof(p.first)); // En esta parte se escribe el primer numero del par
+        file.write(reinterpret_cast<const char*>(&p.second), sizeof(p.second)); // En esta parte se escribe el segundo numero del par
+    }
+    file.close(); // Se cierra el archivo
+}
+
+vector<pair<int, int>> loadComp(const string& filename) {
+    ifstream file(filename, ios::binary); // Abrimos el archivo del que cargaremos los datos en modo binario y los convertiremos
+    vector<pair<int, int>> comprimido; // Inicializamos un vector que contiene los pares del archivo comprimido
+    pair<int, int> p; // Inicializamos p (par) que contiene los pares (a;b)
+    // Hacemos un ciclo while para trabajar con todos los datos del archivo
+    while (file.read(reinterpret_cast<char*>(&p.first), sizeof(p.first))) { //in.read necesita un puntero a char para funcionar, por eso se hace el reinterpret_cast
+        file.read(reinterpret_cast<char*>(&p.second), sizeof(p.second));// con &p almacenamos los bytes leidos del archivo en p.first y con sizeof obtenemos el numero de bytes que deben leerse del archivo
+        comprimido.push_back(p); // En esta parte añadimos los pares leidos del archivo al vector, p.first representa el primer numero del par y p.second el segundo
+    }
+    file.close(); // cerramos el archivo
+    return comprimido; //devuelve los 
+}
+
 //links referenciales de donde me ayudé con los strings
 // https://cplusplus.com/reference/string/string/
 // https://www.geeksforgeeks.org/trie-insert-and-search/
