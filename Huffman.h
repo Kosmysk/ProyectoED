@@ -115,6 +115,54 @@ public:
 
         return decoded;
     }
+
+    // Funcion para leer el archivo .bin que se genera con saveBinaryFile
+    string loadEncoded(const string &filename){
+    ifstream file(filename, ios::binary); // se abre el archivo con ifstream en modo binario
+    // En esta parte se declara el vector de lo bytes del archivo y se guardan estos bytes en el vector
+    vector<unsigned char> byteVector((istreambuf_iterator<char>(file)), istreambuf_iterator<char>()); //estos istreambuf_iterator sirven para iterar sobre el archivo, el primero
+    // itera sobre todos los char en file, que en este caso son los bytes del archivo, el que está vacio es para finalizar esta especie de range 
+
+    string bitString; //se declara un bitString que contiene los bits del archivo pero como un string
+    for (unsigned char byte : byteVector){ // El ciclo for trabaja sobre cada byte, que convenientemente es un unsigned char ya que solo almacena 1 byte, en byteVector
+        bitString += bitset<8>(byte).to_string(); //usando bitset podemos representar de maneria binaria este byte en 8 bits, y con to_string queda como string.
+    }
+
+    return bitString; //Devuelve este string que contiene los bits
+    }
+
+    // Funcion para transformas los bits de string que devuelve nuestro huffman a un archivo .bin como corresponde
+    void saveEncoded(const string &bitString, const string binaryfile){
+        // abrimos el archivo donde vamos a escribir el string como bin, esto se hace con std::ios::binary, asi nos aseguramos que el resultado sea binario si o si
+        ofstream file(binaryfile, ios::binary);
+
+        vector<unsigned char> byteVector; //Como no podemos escribir bit por bit, hacemos un vector de bytes, que guarda los bits del bitstring
+        int bitcount = 0; //Se utiliza bitcount para contar los bits que entran al vector
+        unsigned char byte = 0; // Se inicializa un byte para acumular los bits con unsigned char, lo que es perfecto porque solo almacena 8 bits
+
+        for(char bit : bitString){ // En este for se itera sobre cada bit en el bitstring
+            if (bit == '1'){ // Sabemos que en un byte hay 8 bits, y que estos van de 0 a 7, en esta parte movemos el bit de valor 1 hacia la izquierda, es decir 10000000
+                byte |= (1<<(7 - bitcount)); //  Ahora que tenemos el bit como 10000000 con el operador OR este se añade al byte y nos quedaría el byte como 10000000
+            }     
+            bitcount ++; //Suma 1 a bitcount, si el bit es 0 suma uno directamente, es decir que si el string de bits es '101' el byte nos quedaria como 10100000, ya que para 
+            // el tercer bit, el bit '1' la bitcount seria 2 y esto dejaria 7-2 dejandolo en la quinta posicion
+
+            if (bitcount == 8){ // Como los bytes solo almacenan 8 bits, cuando esta cuenta llega a 8, este byte completo se añade al byteVector
+                byteVector.push_back(byte);
+                bitcount = 0; // Y se reinician el bitcount y el byte para ir contando bits de nuevo e ir agregando bytes al bytevector
+                byte = 0;
+            }
+        }
+
+        if(bitcount > 0){ // si es que sobran bits que no completaron un byte, esto se encarga de meterlo al vector
+            byteVector.push_back(byte);
+        }
+
+        // aca se escriben los resultados en el archivo, write espera un const char asi que se usa reintrepret_cast para transformar la data de byteVector en un const char
+        file.write(reinterpret_cast<const char *>(byteVector.data()), byteVector.size()); //byteVector.size() es el tamaño del vector array, es decir los bytes que se deben escribir.
+        file.close(); //Se cierra el archivo
+    }
+
 };
 
 
