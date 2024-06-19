@@ -110,7 +110,6 @@ string descompresionLZ(const vector<pair<int, int>>& comprimido) {
             descomprimido += descomprimido.substr(pos, largo);            //Agrega el substring al texto descomprimido
         }
     }
-    cout << endl;
     return descomprimido;                //retorna el texto descomprimido
 }    
 
