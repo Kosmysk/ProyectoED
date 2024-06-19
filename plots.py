@@ -52,3 +52,6 @@ plt.legend()
 plt.grid(True, alpha=0.5)
 plt.xlim(1,20)
 plt.show()
+
+### Todos los gráficos generados son modificaciones minúsculas de este código, solo cambiando el archivo de donde provienen los datos y algunas cosas en plt.plot() para 
+### poder visualizar cosas de interés.
