@@ -6,4 +6,4 @@ ser que esté causando este pequeño error, sin embargo el archivo sigue codific
 
 ##########################################################################################################################################################################################################
 En el LZ.h hay otro error, que al repetir el texto de prueba.txt 2 veces, este funciona bien, pero cuando lo repetimos 3 o más veces, no descomprime la tercera vez. No sabemos por qué pasa esto, en
-general este método de LZ funciona mal para archivos más pesados que 2-3 KB.
+general este método de LZ funciona mal para archivos más pesados que 2-3 KB. Puede ser que el archivo .bin no sea el adecuado para guardar este tipo de datos, pero desconozco.
