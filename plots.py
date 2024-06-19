@@ -49,4 +49,6 @@ plt.ylabel('Tiempo $[s]$')
 plt.title('Tiempo experimentos, Codificación Huffman')
 
 plt.legend()
+plt.grid(True, alpha=0.5)
+plt.xlim(1,20)
 plt.show()
