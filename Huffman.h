@@ -164,7 +164,10 @@ public:
     }
 
 };
-
+// por alguna razón borré sin querer las referencias generales, por lo que vuelvo a agregarlas :
+//https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+// https://docs.python.org/3/library/heapq.html
+//https://www.programiz.com/dsa/huffman-coding
 
 //Update: Añadí un constructor explicito en la clase HuffmanCoding para inicializar la raíz del arbol Huffman (root)
 // como nullptr. Esto proporciona una inicialización limpia y coherente del objeto HuffmanCoding al crear instancias de la clase.
