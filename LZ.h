@@ -150,7 +150,7 @@ vector<pair<int, int>> loadComp(const string& filename) {
     return comprimido; //devuelve los 
 }
 
-//links referenciales de donde me ayudé con los strings
+//links referenciales de donde me ayudé con los strings y el uso de la estructura Trie
 // https://cplusplus.com/reference/string/string/
 // https://www.geeksforgeeks.org/trie-insert-and-search/
 // https://www.geeksforgeeks.org/introduction-to-trie-data-structure-and-algorithm-tutorials/
